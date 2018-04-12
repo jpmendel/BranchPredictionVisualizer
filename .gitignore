@@ -105,3 +105,4 @@ ENV/
 
 # Ignore floo files
 .floo
+.flooignore
