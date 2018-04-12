@@ -1,4 +1,4 @@
-from tk import *
+from tkinter import *
 
 def run():
 	pass
