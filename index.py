@@ -1,6 +1,6 @@
 from tkinter import *
 
 def run():
-	pass
+    pass
 
 run()
