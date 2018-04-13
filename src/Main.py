@@ -1,10 +1,7 @@
 from Instruction import *
 
 if __name__ == '__main__':
-    instructions = []
+    with open('instructions.txt', 'r') as file:
+        instructions = [Instruction(int(x, 16)) for x in file.readlines()]
 
-    with open('instruction.txt', 'r') as file:
-        HEX_INSTRUCTIONS = file.readlines()
-
-        for instruction in HEX_INSTRUCTIONS:
-            instructions += Instruction(instruction)
+    print(instructions)
