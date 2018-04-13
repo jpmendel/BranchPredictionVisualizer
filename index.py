@@ -1,5 +1,5 @@
 from tkinter import *
-from src.component.instruction_table import InstructionTable
+from src.component.processor import Processor
 
 class App:
     TITLE = "Branch Prediction Visualizer"
@@ -9,21 +9,21 @@ class App:
     DELAY = 50
     def __init__(self, window):
         self.window = window
-        with open("data/instructionTest.txt", "r") as instruction_file:
-            instructions = instruction_file.readlines()
-        self.instruction_table = InstructionTable(self.window, 100, 100, instructions)
+        self.processor = Processor(window, "files/instruction_test.txt")
 
     def update(self):
-        self.instruction_table.next_instruction()
+        self.processor.update()
 
     def render(self):
-        self.instruction_table.render()
+        self.processor.render()
 
     def clear(self):
         self.window.delete(ALL)
 
     def l_mouse_pressed(self, mouse_x, mouse_y):
-        pass
+        self.processor.on_play_click(mouse_x, mouse_y)
+        self.processor.on_forward_click(mouse_x, mouse_y)
+        self.processor.on_back_click(mouse_x, mouse_y)
 
     def r_mouse_pressed(self, mouse_x, mouse_y):
         pass
