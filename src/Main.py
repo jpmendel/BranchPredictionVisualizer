@@ -23,4 +23,4 @@ if __name__ == '__main__':
             else:
                 instructions.append(InstructionTypeI(instruction))
 
-    process(instructions)
+    Processor().process(instructions)

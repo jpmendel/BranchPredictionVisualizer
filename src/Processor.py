@@ -1,3 +1,6 @@
+from Instruction import *
+from InstructionTypeR import *
+
 REGISTERS = [0] * 32
 
 NAME_FROM_REGISTER = [
@@ -8,5 +11,25 @@ NAME_FROM_REGISTER = [
 ]
 
 
-def process(instructions):
-    [print(x) for x in instructions]
+class Processor:
+    def __init__(self):
+        pass
+
+    def process(self, instructions):
+        for instruction in instructions:
+            if instruction.is_nop() or instruction.is_syscall():
+                continue
+
+            if instruction.get_opcode() == 0x00:
+                name = NAME_FROM_FUNCT[instruction.get_funct()]
+
+                if name == 'add':
+                    REGISTERS[instruction.get_rd()] = REGISTERS[instruction.get_rs()] + REGISTERS[instruction.get_rt()]
+            else:
+                name = NAME_FROM_OPCODE[instruction.get_opcode()]
+
+                if name == 'addi' or name == 'addiu':
+                    REGISTERS[instruction.get_rt()] = REGISTERS[instruction.get_rs()] + instruction.get_immediate()
+
+            print(instruction)
+            print(REGISTERS)

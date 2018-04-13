@@ -27,6 +27,12 @@ class Instruction:
     def get_opcode(self):
         return self.opcode
 
+    def is_nop(self):
+        return self.instruction == 0
+
+    def is_syscall(self):
+        return self.instruction == 12
+
     def __repr__(self):
         if self.instruction == 0:
             return 'nop'
