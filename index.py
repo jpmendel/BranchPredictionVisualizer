@@ -9,7 +9,7 @@ class App:
     DELAY = 50
     def __init__(self, window):
         self.window = window
-        with open("data/instructions.txt", "r") as instruction_file:
+        with open("data/instructionTest.txt", "r") as instruction_file:
             instructions = instruction_file.readlines()
         self.instruction_table = InstructionTable(self.window, 100, 100, instructions)
 
