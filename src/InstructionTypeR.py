@@ -1,5 +1,4 @@
 from Instruction import *
-from Processor import *
 
 NAME_FROM_FUNCT = {
     32: 'add', 33: 'addu',
@@ -31,6 +30,8 @@ class InstructionTypeR(Instruction):
         return self.funct
 
     def __repr__(self):
+        from Processor import NAME_FROM_REGISTER
+
         representation = NAME_FROM_FUNCT[self.funct]
         representation += ' '
         representation += NAME_FROM_REGISTER[self.rd]
