@@ -1,5 +1,5 @@
 from tkinter import *
-#from src.main import *
+from src.component.instruction_table import InstructionTable
 
 class App:
     TITLE = "Branch Prediction Visualizer"
@@ -9,15 +9,18 @@ class App:
     DELAY = 50
     def __init__(self, window):
         self.window = window
-
-    def render(self):
-        pass
+        with open("data/instructions.txt", "r") as instruction_file:
+            instructions = instruction_file.readlines()
+        self.instruction_table = InstructionTable(self.window, 100, 100, instructions)
 
     def update(self):
-        pass
+        self.instruction_table.next_instruction()
 
-    def mouse_motion(self, mouse_x, mouse_y):
-        pass
+    def render(self):
+        self.instruction_table.render()
+
+    def clear(self):
+        self.window.delete(ALL)
 
     def l_mouse_pressed(self, mouse_x, mouse_y):
         pass
@@ -31,9 +34,6 @@ class App:
     def key_released(self, character, symbol):
         pass
 
-def mouse_motion(event):
-    app.mouse_motion(event.x, event.y)
-
 def l_mouse_pressed(event):
     app.l_mouse_pressed(event.x, event.y)
 
@@ -46,14 +46,11 @@ def key_pressed(event):
 def key_released(event):
     app.key_released(event.char, event.keysym)
 
-def main_function():
-    refresh_gui()
-    app.window.after(App.DELAY, main_function)
-
-def refresh_gui():
-    app.window.delete(ALL)
+def update_gui():
+    app.clear()
     app.update()
     app.render()
+    app.window.after(App.DELAY, update_gui)
 
 def init():
     global tk
@@ -65,7 +62,6 @@ def init():
     tk.title(App.TITLE)
     if App.ICON:
         tk.iconbitmap(App.ICON)
-    tk.bind("<Motion>", mouse_motion)
     tk.bind("<Button-1>", l_mouse_pressed)
     tk.bind("<Button-3>", r_mouse_pressed)
     tk.bind("<KeyPress>", key_pressed)
@@ -74,7 +70,7 @@ def init():
 
 def run():
     init()
-    main_function()
+    update_gui()
     tk.mainloop()
 
 run()

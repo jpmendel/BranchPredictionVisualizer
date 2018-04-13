@@ -1,0 +1,66 @@
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
+add $t2, $t0, $t1
+sw $t2, 0($sp)
+beq $t2, $t3, label
+j 0x10000000
+addi $a0, $t0, 10
+lw $t2, 0($sp)
