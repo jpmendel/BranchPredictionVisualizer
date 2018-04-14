@@ -20,31 +20,29 @@ class App:
     def clear(self):
         self.window.delete(ALL)
 
-    def l_mouse_pressed(self, mouse_x, mouse_y):
-        self.processor.on_play_click(mouse_x, mouse_y)
-        self.processor.on_forward_click(mouse_x, mouse_y)
-        self.processor.on_back_click(mouse_x, mouse_y)
+    def l_mouse_pressed(self, event):
+        self.processor.click_events(event)
 
-    def r_mouse_pressed(self, mouse_x, mouse_y):
+    def r_mouse_pressed(self, event):
         pass
 
-    def key_pressed(self, character, symbol):
+    def key_pressed(self, event):
         pass
 
-    def key_released(self, character, symbol):
+    def key_released(self, event):
         pass
 
 def l_mouse_pressed(event):
-    app.l_mouse_pressed(event.x, event.y)
+    app.l_mouse_pressed(event)
 
 def r_mouse_pressed(event):
-    app.r_mouse_pressed(event.x, event.y)
+    app.r_mouse_pressed(event)
 
 def key_pressed(event):
-    app.key_pressed(event.char, event.keysym)
+    app.key_pressed(event)
 
 def key_released(event):
-    app.key_released(event.char, event.keysym)
+    app.key_released(event)
 
 def update_gui():
     app.clear()
