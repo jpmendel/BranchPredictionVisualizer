@@ -1,6 +1,6 @@
-from InstructionTypeI import *
-from InstructionTypeJ import *
-from InstructionTypeR import *
+from .data.instruction_r import InstructionR
+from .data.instruction_i import InstructionI
+from .data.instruction_j import InstructionJ
 
 if __name__ == '__main__':
     with open('files/instructions.txt', 'r') as file:
@@ -17,10 +17,10 @@ if __name__ == '__main__':
             opcode = (instruction >> 26) & 63
 
             if opcode == 0:
-                instructions.append(InstructionTypeR(instruction))
+                instructions.append(InstructionR(instruction))
             elif opcode == 2 or opcode == 3:
-                instructions.append(InstructionTypeJ(instruction))
+                instructions.append(InstructionJ(instruction))
             else:
-                instructions.append(InstructionTypeI(instruction))
+                instructions.append(InstructionI(instruction))
 
     process(instructions)
