@@ -1,4 +1,4 @@
-from InstructionTypeR import *
+from .instruction_r import InstructionR
 
 NAME_FROM_REGISTER = [
     'zero', 'at', 'v0', 'v1', 'a0', 'a1', 'a2', 'a3',

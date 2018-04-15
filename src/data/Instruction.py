@@ -12,7 +12,7 @@ NAME_FROM_OPCODE = {
 }
 
 
-class Instruction:
+class Instruction(object):
     def __init__(self, instruction):
         self.instruction = instruction
         self.opcode = (instruction >> 26) & 63

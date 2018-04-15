@@ -1,8 +1,7 @@
-from Instruction import *
-from Processor import *
+from .instruction import Instruction
 
 
-class InstructionTypeI(Instruction):
+class InstructionI(Instruction):
     def __init__(self, instruction):
         super().__init__(instruction)
 
