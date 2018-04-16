@@ -2,8 +2,10 @@ from data.instruction_r import InstructionR
 from data.instruction_i import InstructionI
 from data.instruction_j import InstructionJ
 from data.instruction import Instruction
-from data.processor import process
+from data.processor import Processor
+
 import os
+
 
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,4 +31,4 @@ if __name__ == '__main__':
             else:
                 instructions.append(InstructionI(instruction))
 
-    process(instructions)
+    Processor().process(instructions)

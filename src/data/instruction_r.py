@@ -1,12 +1,16 @@
 from data.instruction import Instruction
 
 NAME_FROM_FUNCT = {
-    32: 'add', 33: 'addu',
-    36: 'and', 8:  'jr',
-    39: 'nor', 37: 'or',
-    42: 'slt', 43: 'sltu',
-    0:  'sll', 2:  'srl',
-    34: 'sub', 35: 'subu'
+     3: 'sra',
+    16: 'mfhi', 18: 'mflo',
+    24: 'mult', 25: 'multu',
+    26: 'div',  27: 'divu',
+    32: 'add',  33: 'addu',
+    36: 'and',   8:  'jr',
+    39: 'nor',  37: 'or',
+    42: 'slt',  43: 'sltu',
+    0:  'sll',   2:  'srl',
+    34: 'sub',  35: 'subu'
 }
 
 
