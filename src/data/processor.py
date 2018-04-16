@@ -4,6 +4,8 @@ from util.util import *
 
 HI, LO = 0, 0
 
+MEMORY = {}
+
 NAME_FROM_REGISTER = [
     'zero', 'at', 'v0', 'v1', 'a0', 'a1', 'a2', 'a3',
     't0', 't1', 't2', 't3', 't4', 't5', 't6', 't7',
@@ -95,26 +97,46 @@ class Processor(object):
             else:  # I-Type
                 name = NAME_FROM_OPCODE[opcode]
                 immediate = instruction.get_immediate()
+                sign_extended_immediate = Util.sign_extend(immediate, 15)
 
                 if name == 'addi' or name == 'addiu':
-                    REGISTERS[rt] = REGISTERS[rs] + immediate
+                    REGISTERS[rt] = REGISTERS[rs] + sign_extended_immediate
                 elif name == 'andi':
                     REGISTERS[rt] = REGISTERS[rs] & immediate  # TODO: Zero-extend immediate
                 elif name == 'beq':
                     if REGISTERS[rs] == REGISTERS[rt]:
-                        i += Util.sign_extend(immediate, 15)
+                        i += sign_extended_immediate + 1
                         continue
                 elif name == 'bne':
                     if REGISTERS[rs] != REGISTERS[rt]:
-                        i += Util.sign_extend(immediate, 15)
+                        i += sign_extended_immediate + 1
                         continue
+                elif name == 'lbu':
+                    REGISTERS[rt] = (MEMORY[REGISTERS[rs] + sign_extended_immediate]) & 255
+                elif name == 'lhu':
+                    REGISTERS[rt] = (MEMORY[REGISTERS[rs] + sign_extended_immediate] & 65535)
                 elif name == 'lui':
                     REGISTERS[rt] = immediate << 16
+                elif name == 'll' or name == 'lw':
+                    REGISTERS[rt] = MEMORY[REGISTERS[rs] + sign_extended_immediate]
                 elif name == 'ori':
                     REGISTERS[rt] = REGISTERS[rs] | immediate  # TODO: Zero-extend immediate
+                elif name == 'sb':
+                    value = MEMORY[REGISTERS[rs] + sign_extended_immediate]
+                    value &= ~0xFF
+                    value |= (REGISTERS[rt] & 255)
+                    MEMORY[REGISTERS[rs] + sign_extended_immediate] = value
+                elif name == 'sh':
+                    value = MEMORY[REGISTERS[rs] + sign_extended_immediate]
+                    value &= ~0xFFFF
+                    value |= (REGISTERS[rt] & 65535)
+                    MEMORY[REGISTERS[rs] + sign_extended_immediate] = value
                 elif name == 'slti' or name == 'sltiu':
-                    REGISTERS[rt] = 1 if REGISTERS[rs] < immediate else 0
+                    REGISTERS[rt] = 1 if REGISTERS[rs] < sign_extended_immediate else 0
+                elif name == 'sw':
+                    MEMORY[REGISTERS[rs] + sign_extended_immediate] = REGISTERS[rt]
 
-            print('Registers:', REGISTERS)
+            print('\tRegisters:', REGISTERS)
+            print('\tMemory:', MEMORY)
 
             i += 1

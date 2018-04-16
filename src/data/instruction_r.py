@@ -1,7 +1,7 @@
 from data.instruction import Instruction
 
 NAME_FROM_FUNCT = {
-     3: 'sra',
+    3:  'sra',
     16: 'mfhi', 18: 'mflo',
     24: 'mult', 25: 'multu',
     26: 'div',  27: 'divu',
