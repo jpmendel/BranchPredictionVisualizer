@@ -1,4 +1,4 @@
-from .instruction import Instruction
+from data.instruction import Instruction
 
 NAME_FROM_FUNCT = {
     32: 'add', 33: 'addu',

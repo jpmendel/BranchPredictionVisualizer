@@ -1,4 +1,6 @@
-from .instruction import Instruction
+from data.instruction import Instruction
+from data.instruction import NAME_FROM_OPCODE
+from data.processor import NAME_FROM_REGISTER
 
 
 class InstructionI(Instruction):

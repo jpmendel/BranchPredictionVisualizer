@@ -36,7 +36,6 @@ class Instruction(object):
     def __repr__(self):
         if self.instruction == 0:
             return 'nop'
-
         if self.instruction == 12:
             return 'syscall'
 

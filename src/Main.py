@@ -1,9 +1,15 @@
-from .data.instruction_r import InstructionR
-from .data.instruction_i import InstructionI
-from .data.instruction_j import InstructionJ
+from data.instruction_r import InstructionR
+from data.instruction_i import InstructionI
+from data.instruction_j import InstructionJ
+from data.instruction import Instruction
+from data.processor import process
+import os
+
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 if __name__ == '__main__':
-    with open('files/instructions.txt', 'r') as file:
+    with open(os.path.join(SRC_DIR, '..' + os.sep + 'files' + os.sep + 'instructions.txt'), 'r') as file:
         instructions = []
 
         for line in file.readlines():

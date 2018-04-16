@@ -1,4 +1,6 @@
-from .instruction_r import InstructionR
+from data.instruction import NAME_FROM_OPCODE
+from data.instruction_r import NAME_FROM_FUNCT
+from util.util import *
 
 NAME_FROM_REGISTER = [
     'zero', 'at', 'v0', 'v1', 'a0', 'a1', 'a2', 'a3',
@@ -9,10 +11,7 @@ NAME_FROM_REGISTER = [
 
 REGISTERS = {key: 0 for key in NAME_FROM_REGISTER}
 
-
-def sign_extend(value, bits):
-    sign_bit = 1 << (bits - 1)
-    return (value & (sign_bit - 1)) - (value & sign_bit)
+START_PC = 0x00100008
 
 
 def process(instructions):
@@ -21,15 +20,17 @@ def process(instructions):
     while i < len(instructions):
         instruction = instructions[i]
 
+        print('PC:', i, '  Instruction:', instruction)
+
         if instruction.is_nop():
             i += 1
             continue
 
         if instruction.is_syscall():
             if REGISTERS['v0'] == 1:  # Print Integer
-                print(REGISTERS['a0'])
+                print('SYSCALL - Print Integer:', REGISTERS['a0'])
             elif REGISTERS['v0'] == 10:  # Exit Program
-                print('Terminating...')
+                print('SYSCALL - Exit Program')
                 return
 
             i += 1
@@ -37,8 +38,14 @@ def process(instructions):
 
         opcode = instruction.get_opcode()
 
-        if opcode == 0x02 or opcode == 0x03:  # TODO: Handle j and jal (change i)
-            raise NotImplementedError('j and jal are not handled!')
+        if opcode == 0x02:  # Jump
+            i = instruction.get_jump_address() - START_PC
+            continue
+
+        if opcode == 0x03:  # Jump and Link
+            REGISTERS['ra'] = i + 2
+            i = instruction.get_jump_address() - START_PC
+            continue
 
         rs = NAME_FROM_REGISTER[instruction.get_rs()]
         rt = NAME_FROM_REGISTER[instruction.get_rt()]
@@ -77,11 +84,11 @@ def process(instructions):
                 REGISTERS[rt] = REGISTERS[rs] & immediate  # TODO: Zero-extend immediate
             elif name == 'beq':
                 if REGISTERS[rs] == REGISTERS[rt]:
-                    i += sign_extend(immediate, 15)
+                    i += Util.sign_extend(immediate, 15)
                     continue
             elif name == 'bne':
                 if REGISTERS[rs] != REGISTERS[rt]:
-                    i += sign_extend(immediate, 15)
+                    i += Util.sign_extend(immediate, 15)
                     continue
             elif name == 'lui':
                 REGISTERS[rt] = immediate << 16
@@ -90,7 +97,6 @@ def process(instructions):
             elif name == 'slti' or name == 'sltiu':
                 REGISTERS[rt] = 1 if REGISTERS[rs] < immediate else 0
 
-        print(instruction)
         print('Registers:', REGISTERS)
 
         i += 1

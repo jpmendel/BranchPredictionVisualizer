@@ -1,4 +1,5 @@
-from .instruction import Instruction
+from data.instruction import Instruction
+from data.instruction import NAME_FROM_OPCODE
 
 
 class InstructionJ(Instruction):
