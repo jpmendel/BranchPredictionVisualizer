@@ -91,7 +91,7 @@ class Processor(object):
                 elif name == 'sra':
                     REGISTERS[rd] = REGISTERS[rt] >> shamt
                 elif name == 'srl':
-                    pass  # TODO: Implement logical right shift.
+                    REGISTERS[rd] = Util.logical_right_shift(REGISTERS[rt], shamt)
                 elif name == 'sub' or name == 'subu':
                     REGISTERS[rd] = REGISTERS[rs] - REGISTERS[rt]
             else:  # I-Type
