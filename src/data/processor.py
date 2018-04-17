@@ -1,6 +1,6 @@
-from data.instruction import NAME_FROM_OPCODE
-from data.instruction_r import NAME_FROM_FUNCT
-from util.util import *
+from .instruction import NAME_FROM_OPCODE
+from .instruction_r import NAME_FROM_FUNCT
+from src.util.util import *
 
 HI, LO = 0, 0
 

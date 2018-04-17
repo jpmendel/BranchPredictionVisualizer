@@ -1,6 +1,5 @@
-from data.instruction import Instruction
-from data.instruction import NAME_FROM_OPCODE
-from data.processor import NAME_FROM_REGISTER
+from .instruction import Instruction
+from .constants import Constants
 
 
 class InstructionI(Instruction):
@@ -17,11 +16,11 @@ class InstructionI(Instruction):
         return self.immediate
 
     def __repr__(self):
-        representation = NAME_FROM_OPCODE[self.opcode]
+        representation = Constants.NAME_FROM_OPCODE[self.opcode]
         representation += ' '
-        representation += NAME_FROM_REGISTER[self.rt]
+        representation += Constants.NAME_FROM_REGISTER[self.rt]
         representation += ' '
-        representation += NAME_FROM_REGISTER[self.rs]
+        representation += Constants.NAME_FROM_REGISTER[self.rs]
         representation += ' '
         representation += "0x%X" % self.immediate
 

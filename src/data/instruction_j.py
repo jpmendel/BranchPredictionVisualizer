@@ -1,5 +1,5 @@
-from data.instruction import Instruction
-from data.instruction import NAME_FROM_OPCODE
+from .instruction import Instruction
+from .constants import Constants
 
 
 class InstructionJ(Instruction):
@@ -10,7 +10,7 @@ class InstructionJ(Instruction):
         return self.jump_address
 
     def __repr__(self):
-        representation = NAME_FROM_OPCODE[self.opcode]
+        representation = Constants.NAME_FROM_OPCODE[self.opcode]
         representation += ' '
         representation += "0x%X" % self.jump_address
 

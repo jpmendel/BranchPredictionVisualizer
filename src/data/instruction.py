@@ -1,16 +1,3 @@
-NAME_FROM_OPCODE = {
-    8:  'addi',   9: 'addiu',
-    12: 'andi',   4: 'beq',
-    5:  'bne',    2: 'j',
-    3:  'jal',   36: 'lbu',
-    37: 'lhu',   48: 'll',
-    15: 'lui',   35: 'lw',
-    13: 'ori',   10: 'slti',
-    11: 'sltiu', 40: 'sb',
-    41: 'sh',    43: 'sw'
-}
-
-
 class Instruction(object):
     def __init__(self, instruction):
         self.instruction = instruction

@@ -9,7 +9,7 @@ class App:
     DELAY = 50
     def __init__(self, window):
         self.window = window
-        self.processor = Processor(window, "files/instruction_test.txt")
+        self.processor = Processor(window, "files/instructions.txt")
 
     def update(self):
         self.processor.update()

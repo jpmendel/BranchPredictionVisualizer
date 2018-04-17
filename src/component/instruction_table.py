@@ -7,7 +7,7 @@ class InstructionTable(Component):
     HEIGHT = InstructionEntry.HEIGHT * (NUM_VISIBLE + 1)
     def __init__(self, window, x, y, instructions):
         super(InstructionTable, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)
-        self.current_instruction = 0
+        self.current_pc = 0
         self.instruction_header = InstructionEntry(
             self.window, self.x, self.y, "PC", "Instruction")
         self.instruction_header.header = True
@@ -37,7 +37,7 @@ class InstructionTable(Component):
                     self.x + ((j + 1) * InstructionEntry.WIDTH),
                     self.y + ((i + 1) * InstructionEntry.HEIGHT),
                     fill="white", outline="black")
-                index = self.current_instruction - self.NUM_VISIBLE // 2 + i - 1
+                index = self.current_pc - self.NUM_VISIBLE // 2 + i - 1
                 if index >= 0 and index < len(self.instructions):
                     self.instructions[index].y = (
                         self.y + (i * InstructionEntry.HEIGHT))
@@ -53,7 +53,7 @@ class InstructionTable(Component):
                 self.x + ((j + 1) * InstructionEntry.WIDTH) + offset_end,
                 self.y + ((self.NUM_VISIBLE // 2 + 2) * InstructionEntry.HEIGHT) + 15,
                 fill="#FFFFDD", outline="black")
-            index = self.current_instruction
+            index = self.current_pc
             if index >= 0 and index < len(self.instructions):
                 self.instructions[index].y = (
                     self.y + ((self.NUM_VISIBLE // 2 + 1) * InstructionEntry.HEIGHT) + 7.5)
@@ -68,7 +68,7 @@ class InstructionTable(Component):
                     self.x + ((j + 1) * InstructionEntry.WIDTH),
                     self.y + ((i + 1) * InstructionEntry.HEIGHT) + 15,
                     fill="white", outline="black")
-                index = self.current_instruction + i - self.NUM_VISIBLE // 2 - 1
+                index = self.current_pc + i - self.NUM_VISIBLE // 2 - 1
                 if index >= 0 and index < len(self.instructions):
                     self.instructions[index].y = (
                         self.y + (i * InstructionEntry.HEIGHT) + 15)
