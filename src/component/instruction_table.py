@@ -21,21 +21,21 @@ class InstructionTable(Component):
     def render(self):
         i = 0
         for j in range(0, 2):
-            self.window.create_rectangle(
+            self.draw_rect(
                 self.x + (j * InstructionEntry.WIDTH),
                 self.y,
-                self.x + ((j + 1) * InstructionEntry.WIDTH),
-                self.y + InstructionEntry.HEIGHT,
+                InstructionEntry.WIDTH,
+                InstructionEntry.HEIGHT,
                 fill="gray", outline="black")
             self.instruction_header.render()
         i += 1
         while i < self.NUM_VISIBLE // 2 + 1:
             for j in range(0, 2):
-                self.window.create_rectangle(
+                self.draw_rect(
                     self.x + (j * InstructionEntry.WIDTH),
                     self.y + (i * InstructionEntry.HEIGHT),
-                    self.x + ((j + 1) * InstructionEntry.WIDTH),
-                    self.y + ((i + 1) * InstructionEntry.HEIGHT),
+                    InstructionEntry.WIDTH,
+                    InstructionEntry.HEIGHT,
                     fill="white", outline="black")
                 index = self.current_pc - self.NUM_VISIBLE // 2 + i - 1
                 if index >= 0 and index < len(self.instructions):
@@ -46,12 +46,11 @@ class InstructionTable(Component):
             i += 1
         for j in range(0, 2):
             offset_start = 30 if j == 0 else 0
-            offset_end = 30 if j == 1 else 0
-            self.window.create_rectangle(
+            self.draw_rect(
                 self.x + (j * InstructionEntry.WIDTH) - offset_start,
                 self.y + ((self.NUM_VISIBLE // 2 + 1) * InstructionEntry.HEIGHT),
-                self.x + ((j + 1) * InstructionEntry.WIDTH) + offset_end,
-                self.y + ((self.NUM_VISIBLE // 2 + 2) * InstructionEntry.HEIGHT) + 15,
+                InstructionEntry.WIDTH + 30,
+                InstructionEntry.HEIGHT + 15,
                 fill="#FFFFDD", outline="black")
             index = self.current_pc
             if index >= 0 and index < len(self.instructions):
@@ -62,11 +61,11 @@ class InstructionTable(Component):
         i += 1
         while i < self.NUM_VISIBLE + 1:
             for j in range(0, 2):
-                self.window.create_rectangle(
+                self.draw_rect(
                     self.x + (j * InstructionEntry.WIDTH),
                     self.y + (i * InstructionEntry.HEIGHT) + 15,
-                    self.x + ((j + 1) * InstructionEntry.WIDTH),
-                    self.y + ((i + 1) * InstructionEntry.HEIGHT) + 15,
+                    InstructionEntry.WIDTH,
+                    InstructionEntry.HEIGHT,
                     fill="white", outline="black")
                 index = self.current_pc + i - self.NUM_VISIBLE // 2 - 1
                 if index >= 0 and index < len(self.instructions):

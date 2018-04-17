@@ -22,10 +22,10 @@ class TextButton(Component):
 
     def render(self):
         color = self.color - RGBColor(self.click_counter * 8)
-        self.window.create_rectangle(
-            self.x, self.y, self.x + self.width, self.y + self.height,
-            outline="black", fill=color)
-        self.window.create_text(
+        self.draw_rect(
+            self.x, self.y, self.width, self.height,
+            fill=color, outline="black")
+        self.draw_text(
             self.x + self.width / 2, self.y + self.height / 2,
             text=self.text, fill="white", anchor="center")
 
