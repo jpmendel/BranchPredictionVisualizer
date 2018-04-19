@@ -1,10 +1,12 @@
 from .component import Component
 from .instruction_entry import InstructionEntry
 
+
 class InstructionTable(Component):
     NUM_VISIBLE = 7
     WIDTH = InstructionEntry.WIDTH * 2
     HEIGHT = InstructionEntry.HEIGHT * (NUM_VISIBLE + 1)
+
     def __init__(self, window, x, y, instructions):
         super(InstructionTable, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)
         self.current_pc = 0

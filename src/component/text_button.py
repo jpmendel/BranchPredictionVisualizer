@@ -1,13 +1,16 @@
 from .component import Component
 from src.data.rgb_color import RGBColor
 
+
 class ClickState:
     NOT_CLICKED = 0
     PRESS = 1
     RELEASE = 2
 
+
 class TextButton(Component):
     CLICK_ANIM_LENGTH = 4
+
     def __init__(self, window, x, y, width=60, height=30, text="Button", color=RGBColor(0xFF), on_click=None):
         super(TextButton, self).__init__(window, x, y, width, height)
         self.text = text

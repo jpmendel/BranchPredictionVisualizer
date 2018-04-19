@@ -1,6 +1,7 @@
 from .instruction import Instruction
 from .constants import Constants
 
+
 class InstructionR(Instruction):
     def __init__(self, instruction):
         super().__init__(instruction)

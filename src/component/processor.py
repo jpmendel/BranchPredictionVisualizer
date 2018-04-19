@@ -9,8 +9,10 @@ from src.data.rgb_color import RGBColor
 from src.util.util import Util
 from src.data.constants import Constants
 
+
 class Processor(Component):
     START_PC = 0x00100008
+
     def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
         self.instructions = self.read_instruction_file(instruction_file)

@@ -1,8 +1,10 @@
 from .component import Component
 
+
 class InstructionEntry(Component):
     WIDTH = 160
     HEIGHT = 40
+
     def __init__(self, window, x, y, pc, instruction):
         super(InstructionEntry, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)
         self.pc = pc

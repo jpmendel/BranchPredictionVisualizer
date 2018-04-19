@@ -1,12 +1,14 @@
 from tkinter import *
 from src.component.processor import Processor
 
+
 class App:
     TITLE = "Branch Prediction Visualizer"
     ICON = None
     SCREEN_WIDTH = 1000
     SCREEN_HEIGHT = 600
     DELAY = 50
+
     def __init__(self, window):
         self.window = window
         self.processor = Processor(window, "files/instructions.txt")
@@ -32,23 +34,29 @@ class App:
     def key_released(self, event):
         pass
 
+
 def l_mouse_pressed(event):
     app.l_mouse_pressed(event)
+
 
 def r_mouse_pressed(event):
     app.r_mouse_pressed(event)
 
+
 def key_pressed(event):
     app.key_pressed(event)
 
+
 def key_released(event):
     app.key_released(event)
+
 
 def update_gui():
     app.clear()
     app.update()
     app.render()
     app.window.after(App.DELAY, update_gui)
+
 
 def init():
     global tk
@@ -65,6 +73,7 @@ def init():
     tk.bind("<KeyPress>", key_pressed)
     tk.bind("<KeyRelease>", key_released)
     app = App(canvas)
+
 
 def run():
     init()

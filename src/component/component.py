@@ -1,5 +1,6 @@
 from tkinter import *
 
+
 class Component(object):
     def __init__(self, window, x, y, width, height):
         self.window = window
