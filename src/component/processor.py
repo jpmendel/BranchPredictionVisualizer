@@ -1,6 +1,7 @@
 from .component import Component
 from .instruction_table import InstructionTable
 from .text_button import TextButton
+from .output_box import OutputBox
 from src.data.instruction import Instruction
 from src.data.instruction_r import InstructionR
 from src.data.instruction_i import InstructionI
@@ -45,6 +46,12 @@ class Processor(Component):
             text=">",
             color=RGBColor(0x22, 0x66, 0xDD),
             on_click=self.on_forward_button_click)
+        self.syscall_output = OutputBox(
+            self.window,
+            self.instruction_table.x + 30, 500,
+            260, 30,
+            text="Output"
+        )
 
     def update(self):
         if self.play:
@@ -52,12 +59,14 @@ class Processor(Component):
         self.play_button.update()
         self.forward_button.update()
         self.back_button.update()
+        self.syscall_output.update()
 
     def render(self):
         self.instruction_table.render()
         self.play_button.render()
         self.forward_button.render()
         self.back_button.render()
+        self.syscall_output.render()
 
     def play_pause_processor(self):
         self.play = not self.play
