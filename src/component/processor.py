@@ -12,18 +12,17 @@ from src.data.constants import Constants
 
 
 class Processor(Component):
-    START_PC = 0x00100008
-
-    def __init__(self, window, instruction_file):
+    def __init__(self, window, start_pc, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
         self.instructions = self.read_instruction_file(instruction_file)
         self.current_pc = 0
-        self.registers = { key: 0 for key in Constants.NAME_FROM_REGISTER }
+        self.registers = {key: 0 for key in Constants.NAME_FROM_REGISTER}
         self.memory = {}
         self.hi = 0
         self.lo = 0
         self.play = False
         self.play_counter = 0
+        self.start_pc = start_pc
         self.instruction_table = InstructionTable(self.window, 100, 100, self.instructions)
         self.back_button = TextButton(
             self.window,
@@ -163,12 +162,13 @@ class Processor(Component):
         opcode = instruction.get_opcode()
 
         if opcode == 0x02:  # Jump
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         if opcode == 0x03:  # Jump and Link
+            print(instruction.get_jump_address(), self.start_pc, instruction.get_jump_address() - self.start_pc)
             self.registers['ra'] = self.current_pc + 2
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         rs = Constants.NAME_FROM_REGISTER[instruction.get_rs()]
