@@ -1,5 +1,6 @@
 from .component import Component
 from .instruction_table import InstructionTable
+from .tournament_predictor import TournamentPredictor
 from .text_button import TextButton
 from src.data.instruction import Instruction
 from src.data.instruction_r import InstructionR
@@ -24,6 +25,7 @@ class Processor(Component):
         self.play = False
         self.play_counter = 0
         self.instruction_table = InstructionTable(self.window, 100, 100, self.instructions)
+        self.tournament_predictor = TournamentPredictor(self.window, 400, 100)
         self.back_button = TextButton(
             self.window,
             self.instruction_table.x + 30, 450,
@@ -58,6 +60,7 @@ class Processor(Component):
         self.play_button.render()
         self.forward_button.render()
         self.back_button.render()
+        self.tournament_predictor.render()
 
     def play_pause_processor(self):
         self.play = not self.play
