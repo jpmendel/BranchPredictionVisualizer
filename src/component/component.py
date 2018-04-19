@@ -10,8 +10,8 @@ class Component(object):
         self.height = height
 
     def contains_point(self, x, y):
-        return (x > self.x and x < self.x + self.width
-            and y > self.y and y < self.y + self.height)
+        return (self.x < x < self.x + self.width
+                and self.y < y < self.y + self.height)
 
     def draw_rect(self, x, y, width, height, fill="black", outline="black"):
         self.window.create_rectangle(
