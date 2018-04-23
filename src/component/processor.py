@@ -8,6 +8,7 @@ from src.data.instruction_j import InstructionJ
 from src.data.rgb_color import RGBColor
 from src.util.util import Util
 from src.data.constants import Constants
+from src.data.processor_state import ProcessorState
 
 
 class Processor(Component):
@@ -45,6 +46,7 @@ class Processor(Component):
             text=">",
             color=RGBColor(0x22, 0x66, 0xDD),
             on_click=self.on_forward_button_click)
+        self.state_stack = []
 
     def update(self):
         if self.play:
@@ -76,6 +78,12 @@ class Processor(Component):
 
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
+
+            # Store state
+            state_obj = ProcessorState(self.current_pc, self.registers, self.memory)
+            self.push_state(state_obj)
+
+            # Set next pc
             jump = self.process(self.instructions[self.current_pc])
             if not jump:
                 self.current_pc += 1
@@ -83,7 +91,10 @@ class Processor(Component):
 
     def previous_instruction(self):
         if self.current_pc > 0:
-            self.current_pc -= 1
+            state_obj = self.pop_state()
+            self.current_pc = state_obj.get_pc()
+            self.registers = state_obj.get_registers()
+            self.memory = state_obj.get_memory()
             self.instruction_table.current_pc = self.current_pc
 
     def jump_to_instruction(self, target):
@@ -138,7 +149,6 @@ class Processor(Component):
 
     def process(self, instruction):
         print('PC:', self.current_pc, '  Instruction:', instruction)
-
         if instruction.is_nop():
             return
 
@@ -246,3 +256,9 @@ class Processor(Component):
 
             print('\tRegisters:', self.registers)
             print('\tMemory:', self.memory)
+
+    def push_state(self, state_obj):
+        self.state_stack.append(state_obj)
+
+    def pop_state(self):
+        return self.state_stack.pop(-1)
