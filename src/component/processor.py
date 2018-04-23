@@ -15,6 +15,8 @@ from src.data.processor_state import ProcessorState
 class Processor(Component):
     def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
+        self.window = window                        # Keeping for resets
+        self.instruction_file = instruction_file    # Keeping for resets
         self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
         self.current_pc = 0
@@ -51,7 +53,7 @@ class Processor(Component):
             self.window,
             self.instruction_table.x + 30, 500,
             260, 30,
-            text="Output"
+            text="No Output"
         )
 
     def update(self):
@@ -70,9 +72,12 @@ class Processor(Component):
         self.syscall_output.render()
 
     def play_pause_processor(self):
-        self.play = not self.play
-        self.play_button.text = "Pause" if self.play else "Play"
-        self.play_counter = 0
+        if self.play_button.text == "Reset":  # If waiting to reset
+            self.__init__(self.window, self.instruction_file)   # Reset
+        else:                                 # If normal operation
+            self.play = not self.play
+            self.play_button.text = "Pause" if self.play else "Play"
+            self.play_counter = 0
 
     def play_processor(self):
         self.play = True
@@ -83,6 +88,12 @@ class Processor(Component):
         self.play = False
         self.play_button.text = "Play"
         self.play_counter = 0
+
+    def reset_ready(self):
+        self.play = False
+        self.play_button.text = "Reset"
+        self.play_counter = 0
+        self.forward_button.color = RGBColor(0x70, 0x70, 0x70)  # Grey out button
 
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
@@ -127,8 +138,9 @@ class Processor(Component):
         self.play_pause_processor()
 
     def on_forward_button_click(self):
-        self.pause_processor()
-        self.next_instruction()
+        if self.play_button.text != "Reset":
+            self.pause_processor()
+            self.next_instruction()
 
     def on_back_button_click(self):
         self.pause_processor()
@@ -174,6 +186,7 @@ class Processor(Component):
             return instructions
 
     def process(self, instruction):
+        print('PC:', self.current_pc, '  Instruction:', instruction)
         if instruction.is_nop():
             return
 
@@ -184,7 +197,7 @@ class Processor(Component):
                 self.syscall_output.text = 'Print Integer: ' + str(self.registers['a0'])
             elif self.registers['v0'] == 10:  # Exit Program
                 print('SYSCALL - Exit Program')
-                self.pause_processor()
+                self.reset_ready()
                 self.pop_state()
                 return True
             return
