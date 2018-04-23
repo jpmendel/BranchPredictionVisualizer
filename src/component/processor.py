@@ -32,7 +32,7 @@ class Processor(Component):
             self.instruction_table.x + 30, 450,
             60, 30,
             text="<",
-            color=RGBColor(0x22, 0x66, 0xDD),
+            color=RGBColor(0x70, 0x70, 0x70),
             on_click=self.on_back_button_click)
         self.play_button = TextButton(
             self.window,
@@ -70,6 +70,13 @@ class Processor(Component):
         self.forward_button.render()
         self.back_button.render()
         self.syscall_output.render()
+        self.render_colors()
+
+    def render_colors(self):
+        if self.current_pc != 0:
+            self.back_button.color = RGBColor(0x22, 0x66, 0xDD)
+        if self.play_button.text != "Reset":
+            self.forward_button.color = RGBColor(0x22, 0x66, 0xDD)
 
     def play_pause_processor(self):
         if self.play_button.text == "Reset":  # If waiting to reset
@@ -143,8 +150,9 @@ class Processor(Component):
             self.next_instruction()
 
     def on_back_button_click(self):
-        self.pause_processor()
-        self.previous_instruction()
+        if self.current_pc != 0:
+            self.pause_processor()
+            self.previous_instruction()
 
     def animate_play(self):
         self.play_counter += 1
