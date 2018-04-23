@@ -1,6 +1,7 @@
 from .component import Component
 from .instruction_table import InstructionTable
 from .text_button import TextButton
+from .output_box import OutputBox
 from src.data.instruction import Instruction
 from src.data.instruction_r import InstructionR
 from src.data.instruction_i import InstructionI
@@ -11,13 +12,12 @@ from src.data.constants import Constants
 
 
 class Processor(Component):
-    START_PC = 0x00100008
-
     def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
+        self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
         self.current_pc = 0
-        self.registers = { key: 0 for key in Constants.NAME_FROM_REGISTER }
+        self.registers = {key: 0 for key in Constants.NAME_FROM_REGISTER}
         self.memory = {}
         self.hi = 0
         self.lo = 0
@@ -45,6 +45,12 @@ class Processor(Component):
             text=">",
             color=RGBColor(0x22, 0x66, 0xDD),
             on_click=self.on_forward_button_click)
+        self.syscall_output = OutputBox(
+            self.window,
+            self.instruction_table.x + 30, 500,
+            260, 30,
+            text="Output"
+        )
 
     def update(self):
         if self.play:
@@ -52,12 +58,14 @@ class Processor(Component):
         self.play_button.update()
         self.forward_button.update()
         self.back_button.update()
+        self.syscall_output.update()
 
     def render(self):
         self.instruction_table.render()
         self.play_button.render()
         self.forward_button.render()
         self.back_button.render()
+        self.syscall_output.render()
 
     def play_pause_processor(self):
         self.play = not self.play
@@ -118,22 +126,31 @@ class Processor(Component):
         with open(instruction_file) as file:
             instructions = []
 
-            for line in file.readlines():
-                instruction = int(line, 16)
+            lines = file.readlines()
 
-                # Handle nop and syscall, respectively.
-                if instruction == 0 or instruction == 12:
-                    instructions.append(Instruction(instruction))
-                    continue
+            for i in range(2, len(lines)):
+                machine_code = lines[i].split(' ')
 
-                opcode = (instruction >> 26) & 63
+                if self.start_pc is None:
+                    self.start_pc = int(machine_code[0].lstrip('@'), 16)
 
-                if opcode == 0:
-                    instructions.append(InstructionR(instruction))
-                elif opcode == 2 or opcode == 3:
-                    instructions.append(InstructionJ(instruction))
-                else:
-                    instructions.append(InstructionI(instruction))
+                for j in range(1, len(machine_code)):
+                    instruction = int(machine_code[j], 16)
+
+                    # Handle nop and syscall, respectively.
+                    if instruction == 0 or instruction == 12:
+                        instructions.append(Instruction(instruction))
+                        continue
+
+                    opcode = (instruction >> 26) & 63
+
+                    if opcode == 0:
+                        instructions.append(InstructionR(instruction))
+                    elif opcode == 2 or opcode == 3:
+                        instructions.append(InstructionJ(instruction))
+                    else:
+                        instructions.append(InstructionI(instruction))
+
             return instructions
 
     def process(self, instruction):
@@ -154,12 +171,13 @@ class Processor(Component):
         opcode = instruction.get_opcode()
 
         if opcode == 0x02:  # Jump
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         if opcode == 0x03:  # Jump and Link
+            print(instruction.get_jump_address(), self.start_pc, instruction.get_jump_address() - self.start_pc)
             self.registers['ra'] = self.current_pc + 2
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         rs = Constants.NAME_FROM_REGISTER[instruction.get_rs()]
