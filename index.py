@@ -1,8 +1,6 @@
 from tkinter import *
 from src.component.processor import Processor
 
-import sys
-
 
 class App:
     TITLE = "Branch Prediction Visualizer"
@@ -11,9 +9,9 @@ class App:
     SCREEN_HEIGHT = 600
     DELAY = 50
 
-    def __init__(self, window, start_pc):
+    def __init__(self, window):
         self.window = window
-        self.processor = Processor(window, start_pc, "files/instructions.txt")
+        self.processor = Processor(window, "files/fibonacciRefined.v")
 
     def update(self):
         self.processor.update()
@@ -61,14 +59,6 @@ def update_gui():
 
 
 def init():
-    if len(sys.argv) != 2:
-        raise RuntimeError('You must enter the starting PC as a program argument (ex. 0x10000000)')
-
-    try:
-        start_pc = int(sys.argv[1], 16)
-    except Exception:
-        raise RuntimeError('The starting PC must be a valid hexadecimal number (ex. 10000000)')
-
     global tk
     global app
 
@@ -83,7 +73,7 @@ def init():
     tk.bind("<Button-3>", r_mouse_pressed)
     tk.bind("<KeyPress>", key_pressed)
     tk.bind("<KeyRelease>", key_released)
-    app = App(canvas, start_pc)
+    app = App(canvas)
 
 
 def run():
