@@ -3,7 +3,7 @@ from .component import Component
 
 class GlobalBranchHistory(Component):
     WIDTH = 80
-    HEIGHT = 15
+    HEIGHT = 20
 
     def __init__(self, window, x, y, bits):
         super(GlobalBranchHistory, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)

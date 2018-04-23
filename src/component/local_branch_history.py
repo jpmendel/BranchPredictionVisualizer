@@ -2,8 +2,8 @@ from .component import Component
 
 
 class LocalBranchHistory(Component):
-    WIDTH = 120
-    HEIGHT = 15
+    WIDTH = 100
+    HEIGHT = 20
 
     def __init__(self, window, x, y, bits):
         super(LocalBranchHistory, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)

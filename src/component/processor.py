@@ -25,7 +25,7 @@ class Processor(Component):
         self.play = False
         self.play_counter = 0
         self.instruction_table = InstructionTable(self.window, 100, 100, self.instructions)
-        self.tournament_predictor = TournamentPredictor(self.window, 400, 100)
+        self.tournament_predictor = TournamentPredictor(self.window, 500, 200)
         self.back_button = TextButton(
             self.window,
             self.instruction_table.x + 30, 450,
