@@ -118,16 +118,27 @@ class TournamentPredictor(Component):
         self.local_branch_history = pc_index
 
     def take_branch(self, actual):
-        bht_result = self.branch_history_table[self.local_branch_history]
-        pht_result = self.pattern_history_table[self.global_branch_history]
+        bht_result = self.get_branch_prediction(self.branch_history_table, self.local_branch_history)
+        pht_result = self.get_branch_prediction(self.pattern_history_table, self.global_branch_history)
         meta = self.meta_predictor[self.global_branch_history]
         prediction = pht_result if meta > 1 else bht_result
-        correct = self.pattern_history_table if meta > 1 else self.branch_history_table
-        index = self.global_branch_history if meta > 1 else self.local_branch_history
-        if actual == prediction:
-            pass
+        self.result = "Taken" if prediction == 1 else "Not Taken"
+        if actual == 1:
+            increment_history(self.branch_history_table, self.local_branch_history)
+            increment_history(self.pattern_history_table, self.global_branch_history)
         else:
-            pass
+            decrement_history(self.branch_history_table, self.local_branch_history)
+            decrement_history(self.pattern_history_table, self.global_branch_history)
+        if actual == prediction:
+            increment_history(self.meta_predictor, self.global_branch_history)
+        else:
+            decrement_history(self.meta_predictor, self.global_branch_history)
+
+    def get_branch_prediction(self, history, index):
+        if history[index] > 1:
+            return 1
+        else:
+            return 0
 
     def increment_history(self, history, index):
         if history[index] < 3:
