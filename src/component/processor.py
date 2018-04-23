@@ -11,8 +11,9 @@ from src.data.constants import Constants
 
 
 class Processor(Component):
-    def __init__(self, window, start_pc, instruction_file):
+    def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
+        self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
         self.current_pc = 0
         self.registers = {key: 0 for key in Constants.NAME_FROM_REGISTER}
@@ -21,7 +22,6 @@ class Processor(Component):
         self.lo = 0
         self.play = False
         self.play_counter = 0
-        self.start_pc = start_pc
         self.instruction_table = InstructionTable(self.window, 100, 100, self.instructions)
         self.back_button = TextButton(
             self.window,
@@ -117,22 +117,31 @@ class Processor(Component):
         with open(instruction_file) as file:
             instructions = []
 
-            for line in file.readlines():
-                instruction = int(line, 16)
+            lines = file.readlines()
 
-                # Handle nop and syscall, respectively.
-                if instruction == 0 or instruction == 12:
-                    instructions.append(Instruction(instruction))
-                    continue
+            for i in range(2, len(lines)):
+                machine_code = lines[i].split(' ')
 
-                opcode = (instruction >> 26) & 63
+                if self.start_pc is None:
+                    self.start_pc = int(machine_code[0].lstrip('@'), 16)
 
-                if opcode == 0:
-                    instructions.append(InstructionR(instruction))
-                elif opcode == 2 or opcode == 3:
-                    instructions.append(InstructionJ(instruction))
-                else:
-                    instructions.append(InstructionI(instruction))
+                for j in range(1, len(machine_code)):
+                    instruction = int(machine_code[j], 16)
+
+                    # Handle nop and syscall, respectively.
+                    if instruction == 0 or instruction == 12:
+                        instructions.append(Instruction(instruction))
+                        continue
+
+                    opcode = (instruction >> 26) & 63
+
+                    if opcode == 0:
+                        instructions.append(InstructionR(instruction))
+                    elif opcode == 2 or opcode == 3:
+                        instructions.append(InstructionJ(instruction))
+                    else:
+                        instructions.append(InstructionI(instruction))
+
             return instructions
 
     def process(self, instruction):
