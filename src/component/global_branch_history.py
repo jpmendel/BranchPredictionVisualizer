@@ -2,17 +2,19 @@ from .component import Component
 
 
 class GlobalBranchHistory(Component):
-    WIDTH = 80
-    HEIGHT = 20
+    CELL_WIDTH = 80
+    CELL_HEIGHT = 20
 
     def __init__(self, window, x, y, bits):
-        super(GlobalBranchHistory, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)
+        super(GlobalBranchHistory, self).__init__(window, x, y, self.CELL_WIDTH, self.CELL_HEIGHT * 2)
         self.bits = bits
 
     def render(self):
         self.draw_text(
-            self.x + self.width / 2, self.y + self.height / 4, "Global Branch History")
+            self.x + self.CELL_WIDTH * 0.50,
+            self.y + self.CELL_HEIGHT * 0.50,
+            "Global Branch History")
         self.draw_rect(
-            self.x, self.y + self.height,
-            self.width, self.height,
+            self.x, self.y + self.CELL_HEIGHT,
+            self.CELL_WIDTH, self.CELL_HEIGHT,
             fill="white", outline="black")
