@@ -2,6 +2,7 @@ from .component import Component
 from .instruction_table import InstructionTable
 from .tournament_predictor import TournamentPredictor
 from .text_button import TextButton
+from .output_box import OutputBox
 from src.data.instruction import Instruction
 from src.data.instruction_r import InstructionR
 from src.data.instruction_i import InstructionI
@@ -9,16 +10,18 @@ from src.data.instruction_j import InstructionJ
 from src.data.rgb_color import RGBColor
 from src.util.util import Util
 from src.data.constants import Constants
+from src.data.processor_state import ProcessorState
 
 
 class Processor(Component):
-    START_PC = 0x00100008
-
     def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
+        self.window = window                        # Keeping for resets
+        self.instruction_file = instruction_file    # Keeping for resets
+        self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
         self.current_pc = 0
-        self.registers = { key: 0 for key in Constants.NAME_FROM_REGISTER }
+        self.registers = {key: 0 for key in Constants.NAME_FROM_REGISTER}
         self.memory = {}
         self.hi = 0
         self.lo = 0
@@ -31,7 +34,7 @@ class Processor(Component):
             self.instruction_table.x + 30, 450,
             60, 30,
             text="<",
-            color=RGBColor(0x22, 0x66, 0xDD),
+            color=RGBColor(0x70, 0x70, 0x70),
             on_click=self.on_back_button_click)
         self.play_button = TextButton(
             self.window,
@@ -47,6 +50,13 @@ class Processor(Component):
             text=">",
             color=RGBColor(0x22, 0x66, 0xDD),
             on_click=self.on_forward_button_click)
+        self.state_stack = []
+        self.syscall_output = OutputBox(
+            self.window,
+            self.instruction_table.x + 30, 500,
+            260, 30,
+            text="No Output"
+        )
 
     def update(self):
         if self.play:
@@ -54,6 +64,7 @@ class Processor(Component):
         self.play_button.update()
         self.forward_button.update()
         self.back_button.update()
+        self.syscall_output.update()
 
     def render(self):
         self.instruction_table.render()
@@ -61,11 +72,22 @@ class Processor(Component):
         self.forward_button.render()
         self.back_button.render()
         self.tournament_predictor.render()
+        self.syscall_output.render()
+        self.render_colors()
+
+    def render_colors(self):
+        if self.current_pc != 0:
+            self.back_button.color = RGBColor(0x22, 0x66, 0xDD)
+        if self.play_button.text != "Reset":
+            self.forward_button.color = RGBColor(0x22, 0x66, 0xDD)
 
     def play_pause_processor(self):
-        self.play = not self.play
-        self.play_button.text = "Pause" if self.play else "Play"
-        self.play_counter = 0
+        if self.play_button.text == "Reset":  # If waiting to reset
+            self.__init__(self.window, self.instruction_file)   # Reset
+        else:                                 # If normal operation
+            self.play = not self.play
+            self.play_button.text = "Pause" if self.play else "Play"
+            self.play_counter = 0
 
     def play_processor(self):
         self.play = True
@@ -77,17 +99,41 @@ class Processor(Component):
         self.play_button.text = "Play"
         self.play_counter = 0
 
+    def reset_ready(self):
+        self.play = False
+        self.play_button.text = "Reset"
+        self.play_counter = 0
+        self.forward_button.color = RGBColor(0x70, 0x70, 0x70)  # Grey out button
+
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
+            # Store state
+            state_obj = ProcessorState(self.current_pc, self.registers.copy(), self.memory.copy())
+            self.push_state(state_obj)
+
+            # Set next pc
             jump = self.process(self.instructions[self.current_pc])
+
             if not jump:
                 self.current_pc += 1
+
             self.instruction_table.current_pc = self.current_pc
+
+            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
+            print('\tRegisters:', self.registers)
+            print('\tMemory:', self.memory)
 
     def previous_instruction(self):
         if self.current_pc > 0:
-            self.current_pc -= 1
+            state_obj = self.pop_state()
+            self.current_pc = state_obj.get_pc()
+            self.registers = state_obj.get_registers()
+            self.memory = state_obj.get_memory()
             self.instruction_table.current_pc = self.current_pc
+
+            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
+            print('\tRegisters:', self.registers)
+            print('\tMemory:', self.memory)
 
     def jump_to_instruction(self, target):
         self.current_pc = target
@@ -102,12 +148,14 @@ class Processor(Component):
         self.play_pause_processor()
 
     def on_forward_button_click(self):
-        self.pause_processor()
-        self.next_instruction()
+        if self.play_button.text != "Reset":
+            self.pause_processor()
+            self.next_instruction()
 
     def on_back_button_click(self):
-        self.pause_processor()
-        self.previous_instruction()
+        if self.current_pc != 0:
+            self.pause_processor()
+            self.previous_instruction()
 
     def animate_play(self):
         self.play_counter += 1
@@ -121,48 +169,60 @@ class Processor(Component):
         with open(instruction_file) as file:
             instructions = []
 
-            for line in file.readlines():
-                instruction = int(line, 16)
+            lines = file.readlines()
 
-                # Handle nop and syscall, respectively.
-                if instruction == 0 or instruction == 12:
-                    instructions.append(Instruction(instruction))
-                    continue
+            for i in range(2, len(lines)):
+                machine_code = lines[i].split(' ')
 
-                opcode = (instruction >> 26) & 63
+                if self.start_pc is None:
+                    self.start_pc = int(machine_code[0].lstrip('@'), 16)
 
-                if opcode == 0:
-                    instructions.append(InstructionR(instruction))
-                elif opcode == 2 or opcode == 3:
-                    instructions.append(InstructionJ(instruction))
-                else:
-                    instructions.append(InstructionI(instruction))
+                for j in range(1, len(machine_code)):
+                    instruction = int(machine_code[j], 16)
+
+                    # Handle nop and syscall, respectively.
+                    if instruction == 0 or instruction == 12:
+                        instructions.append(Instruction(instruction))
+                        continue
+
+                    opcode = (instruction >> 26) & 63
+
+                    if opcode == 0:
+                        instructions.append(InstructionR(instruction))
+                    elif opcode == 2 or opcode == 3:
+                        instructions.append(InstructionJ(instruction))
+                    else:
+                        instructions.append(InstructionI(instruction))
+
             return instructions
 
     def process(self, instruction):
         print('PC:', self.current_pc, '  Instruction:', instruction)
-
         if instruction.is_nop():
             return
 
         if instruction.is_syscall():
             if self.registers['v0'] == 1:  # Print Integer
                 print('SYSCALL - Print Integer:', self.registers['a0'])
+                # Update Output box in GUI
+                self.syscall_output.text = 'Print Integer: ' + str(self.registers['a0'])
             elif self.registers['v0'] == 10:  # Exit Program
                 print('SYSCALL - Exit Program')
-                self.pause_processor()
+                self.reset_ready()
+                self.pop_state()
                 return True
             return
 
         opcode = instruction.get_opcode()
 
         if opcode == 0x02:  # Jump
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         if opcode == 0x03:  # Jump and Link
+            print(instruction.get_jump_address(), self.start_pc, instruction.get_jump_address() - self.start_pc)
             self.registers['ra'] = self.current_pc + 2
-            self.current_pc = instruction.get_jump_address() - self.START_PC
+            self.current_pc = instruction.get_jump_address() - self.start_pc
             return True
 
         rs = Constants.NAME_FROM_REGISTER[instruction.get_rs()]
@@ -247,5 +307,8 @@ class Processor(Component):
             elif name == 'sw':
                 self.memory[self.registers[rs] + sign_extended_immediate] = self.registers[rt]
 
-            print('\tRegisters:', self.registers)
-            print('\tMemory:', self.memory)
+    def push_state(self, state_obj):
+        self.state_stack.append(state_obj)
+
+    def pop_state(self):
+        return self.state_stack.pop()
