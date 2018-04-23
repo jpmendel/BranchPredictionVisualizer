@@ -172,6 +172,8 @@ class Processor(Component):
         if instruction.is_syscall():
             if self.registers['v0'] == 1:  # Print Integer
                 print('SYSCALL - Print Integer:', self.registers['a0'])
+                # Update Output box in GUI
+                self.syscall_output.text = 'Print Integer: ' + str(self.registers['a0'])
             elif self.registers['v0'] == 10:  # Exit Program
                 print('SYSCALL - Exit Program')
                 self.pause_processor()
