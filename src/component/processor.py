@@ -86,16 +86,21 @@ class Processor(Component):
 
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
-
             # Store state
-            state_obj = ProcessorState(self.current_pc, self.registers, self.memory)
+            state_obj = ProcessorState(self.current_pc, self.registers.copy(), self.memory.copy())
             self.push_state(state_obj)
 
             # Set next pc
             jump = self.process(self.instructions[self.current_pc])
+
             if not jump:
                 self.current_pc += 1
+
             self.instruction_table.current_pc = self.current_pc
+
+            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
+            print('\tRegisters:', self.registers)
+            print('\tMemory:', self.memory)
 
     def previous_instruction(self):
         if self.current_pc > 0:
@@ -104,6 +109,10 @@ class Processor(Component):
             self.registers = state_obj.get_registers()
             self.memory = state_obj.get_memory()
             self.instruction_table.current_pc = self.current_pc
+
+            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
+            print('\tRegisters:', self.registers)
+            print('\tMemory:', self.memory)
 
     def jump_to_instruction(self, target):
         self.current_pc = target
@@ -165,7 +174,6 @@ class Processor(Component):
             return instructions
 
     def process(self, instruction):
-        print('PC:', self.current_pc, '  Instruction:', instruction)
         if instruction.is_nop():
             return
 
@@ -177,6 +185,7 @@ class Processor(Component):
             elif self.registers['v0'] == 10:  # Exit Program
                 print('SYSCALL - Exit Program')
                 self.pause_processor()
+                self.pop_state()
                 return True
             return
 
@@ -274,11 +283,8 @@ class Processor(Component):
             elif name == 'sw':
                 self.memory[self.registers[rs] + sign_extended_immediate] = self.registers[rt]
 
-            print('\tRegisters:', self.registers)
-            print('\tMemory:', self.memory)
-
     def push_state(self, state_obj):
         self.state_stack.append(state_obj)
 
     def pop_state(self):
-        return self.state_stack.pop(-1)
+        return self.state_stack.pop()
