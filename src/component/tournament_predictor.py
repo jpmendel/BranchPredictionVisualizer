@@ -117,6 +117,18 @@ class TournamentPredictor(Component):
     def update_local_history(self, pc_index):
         self.local_branch_history = pc_index
 
+    def take_branch(self, actual):
+        bht_result = self.branch_history_table[self.local_branch_history]
+        pht_result = self.pattern_history_table[self.global_branch_history]
+        meta = self.meta_predictor[self.global_branch_history]
+        prediction = pht_result if meta > 1 else bht_result
+        correct = self.pattern_history_table if meta > 1 else self.branch_history_table
+        index = self.global_branch_history if meta > 1 else self.local_branch_history
+        if actual == prediction:
+            pass
+        else:
+            pass
+
     def increment_history(self, history, index):
         if history[index] < 3:
             history[index] += 1
