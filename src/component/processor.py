@@ -16,7 +16,6 @@ from src.data.processor_state import ProcessorState
 class Processor(Component):
     def __init__(self, window, instruction_file):
         super(Processor, self).__init__(window, 0, 0, 1000, 600)
-        self.window = window                        # Keeping for resets
         self.instruction_file = instruction_file    # Keeping for resets
         self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
@@ -34,7 +33,7 @@ class Processor(Component):
             self.instruction_table.x + 30, 450,
             60, 30,
             text="<",
-            color=RGBColor(0x70, 0x70, 0x70),
+            color=RGBColor(0x22, 0x66, 0xDD),
             on_click=self.on_back_button_click)
         self.play_button = TextButton(
             self.window,
@@ -65,6 +64,7 @@ class Processor(Component):
         self.forward_button.update()
         self.back_button.update()
         self.syscall_output.update()
+        self.update_button_colors()
 
     def render(self):
         self.instruction_table.render()
@@ -73,12 +73,15 @@ class Processor(Component):
         self.back_button.render()
         self.tournament_predictor.render()
         self.syscall_output.render()
-        self.render_colors()
 
-    def render_colors(self):
-        if self.current_pc != 0:
+    def update_button_colors(self):
+        if self.current_pc == 0:
+            self.back_button.color = RGBColor(0x70, 0x70, 0x70)
+        else:
             self.back_button.color = RGBColor(0x22, 0x66, 0xDD)
-        if self.play_button.text != "Reset":
+        if self.play_button.text == "Reset":
+            self.forward_button.color = RGBColor(0x70, 0x70, 0x70)
+        else:
             self.forward_button.color = RGBColor(0x22, 0x66, 0xDD)
 
     def play_pause_processor(self):
@@ -103,7 +106,6 @@ class Processor(Component):
         self.play = False
         self.play_button.text = "Reset"
         self.play_counter = 0
-        self.forward_button.color = RGBColor(0x70, 0x70, 0x70)  # Grey out button
 
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
