@@ -11,7 +11,7 @@ class App:
 
     def __init__(self, window):
         self.window = window
-        self.processor = Processor(window, "files/instructions.txt")
+        self.processor = Processor(window, "files/fibonacciRefined.v")
 
     def update(self):
         self.processor.update()
@@ -61,6 +61,7 @@ def update_gui():
 def init():
     global tk
     global app
+
     tk = Tk()
     canvas = Canvas(tk, width=App.SCREEN_WIDTH, height=App.SCREEN_HEIGHT)
     canvas.pack()
