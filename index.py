@@ -1,6 +1,8 @@
 from tkinter import *
 from src.component.processor import Processor
 
+import sys
+
 
 class App:
     TITLE = "Branch Prediction Visualizer"
@@ -9,9 +11,9 @@ class App:
     SCREEN_HEIGHT = 600
     DELAY = 50
 
-    def __init__(self, window):
+    def __init__(self, window, file_name):
         self.window = window
-        self.processor = Processor(window, "files/fibonacciRefined.v")
+        self.processor = Processor(window, file_name)
 
     def update(self):
         self.processor.update()
@@ -59,6 +61,10 @@ def update_gui():
 
 
 def init():
+    if len(sys.argv) != 2:
+        print('You must enter a valid .v file as a program argument!')
+        exit()
+
     global tk
     global app
 
@@ -73,7 +79,7 @@ def init():
     tk.bind("<Button-3>", r_mouse_pressed)
     tk.bind("<KeyPress>", key_pressed)
     tk.bind("<KeyRelease>", key_released)
-    app = App(canvas)
+    app = App(canvas, sys.argv[1])
 
 
 def run():
