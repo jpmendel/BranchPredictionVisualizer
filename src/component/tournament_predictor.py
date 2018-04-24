@@ -124,15 +124,15 @@ class TournamentPredictor(Component):
         prediction = pht_result if meta > 1 else bht_result
         self.result = "Taken" if prediction == 1 else "Not Taken"
         if actual == 1:
-            increment_history(self.branch_history_table, self.local_branch_history)
-            increment_history(self.pattern_history_table, self.global_branch_history)
+            self.increment_history(self.branch_history_table, self.local_branch_history)
+            self.increment_history(self.pattern_history_table, self.global_branch_history)
         else:
-            decrement_history(self.branch_history_table, self.local_branch_history)
-            decrement_history(self.pattern_history_table, self.global_branch_history)
+            self.decrement_history(self.branch_history_table, self.local_branch_history)
+            self.decrement_history(self.pattern_history_table, self.global_branch_history)
         if actual == prediction:
-            increment_history(self.meta_predictor, self.global_branch_history)
+            self.increment_history(self.meta_predictor, self.global_branch_history)
         else:
-            decrement_history(self.meta_predictor, self.global_branch_history)
+            self.decrement_history(self.meta_predictor, self.global_branch_history)
 
     def get_branch_prediction(self, history, index):
         if history[index] > 1:
