@@ -59,11 +59,7 @@ class BranchCounter(Component):
             self.y + self.height * 0.75,
             str(self.taken_not_taken))
         self.draw_text(
-<<<<<<< HEAD
-            self.x - self.width * 0.25 - 15,
-=======
             self.x - 15,
->>>>>>> jacob-various
             self.y + self.height * 0.75,
             "N")
         self.draw_text(

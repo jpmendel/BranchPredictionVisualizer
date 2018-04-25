@@ -29,7 +29,7 @@ class Processor(Component):
         self.play_counter = 0
         self.instruction_table = InstructionTable(self.window, 100, 100, self.start_pc, self.instructions)
         self.tournament_predictor = TournamentPredictor(self.window, 500, 150)
-        self.branch_counter = BranchCounter(self.window, 760, 430, 150, 100)
+        self.branch_counter = BranchCounter(self.window, 780, 450, 150, 100)
         self.back_button = TextButton(
             self.window,
             self.instruction_table.x + 30, 450,
