@@ -113,7 +113,15 @@ class Processor(Component):
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
             # Store state
-            state_obj = ProcessorState(self.current_pc, self.registers.copy(), self.memory.copy())
+            state_obj = ProcessorState(
+                self.current_pc,
+                self.registers.copy(),
+                self.memory.copy(),
+                self.tournament_predictor.branch_history_table.copy(),
+                self.tournament_predictor.pattern_history_table.copy(),
+                self.tournament_predictor.meta_predictor.copy(),
+                self.tournament_predictor.global_branch_history.copy(),
+                self.tournament_predictor.result)
             self.push_state(state_obj)
 
             # Set next pc
@@ -134,6 +142,11 @@ class Processor(Component):
             self.current_pc = state_obj.get_pc()
             self.registers = state_obj.get_registers()
             self.memory = state_obj.get_memory()
+            self.tournament_predictor.set_branch_history_table(state_obj.get_branch_history())
+            self.tournament_predictor.set_pattern_history_table(state_obj.get_pattern_history())
+            self.tournament_predictor.set_meta_predictor(state_obj.get_meta_history())
+            self.tournament_predictor.set_global_branch_history(state_obj.get_global_branch_history())
+            self.tournament_predictor.result = state_obj.get_branch_result()
             self.instruction_table.current_pc = self.current_pc
 
             print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
