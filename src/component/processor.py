@@ -59,9 +59,9 @@ class Processor(Component):
             text="No Output")
         self.actual_branch_result = OutputBox(
             self.window,
-            590, 370,
-            200, 30,
-            text="Last actual Branch:  ")
+            637, 370,
+            100, 30,
+            text="Actual:  ")
 
     def update(self):
         if self.play:
@@ -310,7 +310,7 @@ class Processor(Component):
                 if self.registers[rs] == self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
                     prediction = self.tournament_predictor.take_branch(1)
-                    self.actual_branch_result.text = "Last actual Branch: T"
+                    self.actual_branch_result.text = "Actual: T"
                     if prediction == 1:
                         self.branch_counter.taken_taken += 1
                     else:
@@ -318,7 +318,7 @@ class Processor(Component):
                     return True
                 else:
                     prediction = self.tournament_predictor.take_branch(0)
-                    self.actual_branch_result.text = "Last actual Branch: N"
+                    self.actual_branch_result.text = "Actual: N"
                     if prediction == 0:
                         self.branch_counter.not_taken_not_taken += 1
                     else:
@@ -327,7 +327,7 @@ class Processor(Component):
                 if self.registers[rs] != self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
                     prediction = self.tournament_predictor.take_branch(1)
-                    self.actual_branch_result.text = "Last actual Branch: T"
+                    self.actual_branch_result.text = "Actual: T"
                     if prediction == 1:
                         self.branch_counter.taken_taken += 1
                     else:
@@ -335,7 +335,7 @@ class Processor(Component):
                     return True
                 else:
                     prediction = self.tournament_predictor.take_branch(0)
-                    self.actual_branch_result.text = "Last actual Branch: N"
+                    self.actual_branch_result.text = "Actual: N"
                     if prediction == 0:
                         self.branch_counter.not_taken_not_taken += 1
                     else:
