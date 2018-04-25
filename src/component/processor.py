@@ -28,8 +28,8 @@ class Processor(Component):
         self.play = False
         self.play_counter = 0
         self.instruction_table = InstructionTable(self.window, 100, 100, self.start_pc, self.instructions)
-        self.tournament_predictor = TournamentPredictor(self.window, 500, 150)
-        self.branch_counter = BranchCounter(self.window, 780, 450, 150, 100)
+        self.tournament_predictor = TournamentPredictor(self.window, 500, 130)
+        self.branch_counter = BranchCounter(self.window, 815, 470, 150, 100)
         self.back_button = TextButton(
             self.window,
             self.instruction_table.x + 30, 450,
@@ -59,10 +59,9 @@ class Processor(Component):
             text="No Output")
         self.actual_branch_result = OutputBox(
             self.window,
-            430, 343,
+            590, 370,
             200, 30,
-            text="Last actual Branch:  "
-        )
+            text="Last actual Branch:  ")
 
     def update(self):
         if self.play:
@@ -127,7 +126,11 @@ class Processor(Component):
                 self.tournament_predictor.pattern_history_table.copy(),
                 self.tournament_predictor.meta_predictor.copy(),
                 self.tournament_predictor.global_branch_history.copy(),
-                self.tournament_predictor.result)
+                self.tournament_predictor.result,
+                self.branch_counter.taken_taken,
+                self.branch_counter.not_taken_taken,
+                self.branch_counter.taken_not_taken,
+                self.branch_counter.not_taken_not_taken)
             self.push_state(state_obj)
 
             # Set next pc
@@ -153,6 +156,10 @@ class Processor(Component):
             self.tournament_predictor.set_meta_predictor(state_obj.get_meta_history())
             self.tournament_predictor.set_global_branch_history(state_obj.get_global_branch_history())
             self.tournament_predictor.result = state_obj.get_branch_result()
+            self.branch_counter.taken_taken = state_obj.get_taken_taken_count()
+            self.branch_counter.not_taken_taken = state_obj.get_not_taken_taken_count()
+            self.branch_counter.taken_not_taken = state_obj.get_taken_not_taken_count()
+            self.branch_counter.not_taken_not_taken = state_obj.get_not_taken_not_taken_count()
             self.instruction_table.current_pc = self.current_pc
 
             print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
