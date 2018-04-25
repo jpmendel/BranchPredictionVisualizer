@@ -1,6 +1,7 @@
 from .component import Component
 from .instruction_table import InstructionTable
 from .tournament_predictor import TournamentPredictor
+from .branch_counter import BranchCounter
 from .text_button import TextButton
 from .output_box import OutputBox
 from src.data.instruction import Instruction
@@ -26,8 +27,9 @@ class Processor(Component):
         self.lo = 0
         self.play = False
         self.play_counter = 0
-        self.instruction_table = InstructionTable(self.window, 100, 100, self.instructions)
-        self.tournament_predictor = TournamentPredictor(self.window, 500, 200)
+        self.instruction_table = InstructionTable(self.window, 100, 100, self.start_pc, self.instructions)
+        self.tournament_predictor = TournamentPredictor(self.window, 500, 150)
+        self.branch_counter = BranchCounter(self.window, 760, 430, 150, 100)
         self.back_button = TextButton(
             self.window,
             self.instruction_table.x + 30, 450,
@@ -54,8 +56,7 @@ class Processor(Component):
             self.window,
             self.instruction_table.x + 30, 500,
             260, 30,
-            text="No Output"
-        )
+            text="No Output")
 
     def update(self):
         if self.play:
@@ -73,6 +74,7 @@ class Processor(Component):
         self.back_button.render()
         self.tournament_predictor.render()
         self.syscall_output.render()
+        self.branch_counter.render()
 
     def update_button_colors(self):
         if self.current_pc == 0:
@@ -200,6 +202,7 @@ class Processor(Component):
 
     def process(self, instruction):
         print('PC:', self.current_pc, '  Instruction:', instruction)
+        self.tournament_predictor.set_local_branch_history((((self.current_pc + self.start_pc) * 4) >> 2) & 3)
         if instruction.is_nop():
             return
 
@@ -279,11 +282,17 @@ class Processor(Component):
             elif name == 'beq':
                 if self.registers[rs] == self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
+                    self.tournament_predictor.take_branch(1)
                     return True
+                else:
+                    self.tournament_predictor.take_branch(0)
             elif name == 'bne':
                 if self.registers[rs] != self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
+                    self.tournament_predictor.take_branch(1)
                     return True
+                else:
+                    self.tournament_predictor.take_branch(0)
             elif name == 'lbu':
                 self.registers[rt] = (self.memory[self.registers[rs] + sign_extended_immediate]) & 255
             elif name == 'lhu':

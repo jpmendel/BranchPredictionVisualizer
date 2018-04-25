@@ -7,7 +7,7 @@ class InstructionTable(Component):
     WIDTH = InstructionEntry.WIDTH * 2
     HEIGHT = InstructionEntry.HEIGHT * (NUM_VISIBLE + 1)
 
-    def __init__(self, window, x, y, instructions):
+    def __init__(self, window, x, y, start_pc, instructions):
         super(InstructionTable, self).__init__(window, x, y, self.WIDTH, self.HEIGHT)
         self.current_pc = 0
         self.instruction_header = InstructionEntry(
@@ -17,7 +17,7 @@ class InstructionTable(Component):
         for i in range(0, len(instructions)):
             instruction = InstructionEntry(
                 self.window, self.x, self.y + InstructionEntry.HEIGHT * (i + 1),
-                i, instructions[i])
+                str(i) + " : " + hex((i + start_pc) * 4), instructions[i])
             self.instructions.append(instruction)
 
     def render(self):
