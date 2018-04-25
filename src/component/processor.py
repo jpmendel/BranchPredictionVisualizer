@@ -15,8 +15,8 @@ from src.data.processor_state import ProcessorState
 
 
 class Processor(Component):
-    def __init__(self, window, instruction_file):
-        super(Processor, self).__init__(window, 0, 0, 1000, 600)
+    def __init__(self, window, width, height, instruction_file,):
+        super(Processor, self).__init__(window, 0, 0, width, height)
         self.instruction_file = instruction_file    # Keeping for resets
         self.start_pc = None  # KEEP THIS ABOVE THE CALL TO read_instruction_file!
         self.instructions = self.read_instruction_file(instruction_file)
@@ -68,6 +68,7 @@ class Processor(Component):
         self.update_button_colors()
 
     def render(self):
+        self.draw_rect(self.x, self.y, self.width, self.height, outline="white", fill="white")
         self.instruction_table.render()
         self.play_button.render()
         self.forward_button.render()

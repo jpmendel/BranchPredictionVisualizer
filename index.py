@@ -13,7 +13,7 @@ class App:
 
     def __init__(self, window, file_name):
         self.window = window
-        self.processor = Processor(window, file_name)
+        self.processor = Processor(window, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, file_name)
 
     def update(self):
         self.processor.update()
