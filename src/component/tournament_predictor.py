@@ -16,7 +16,7 @@ class TournamentPredictor(Component):
         self.branch_history_table = [2, 2, 2, 2]
         self.pattern_history_table = [2, 2, 2, 2]
         self.meta_predictor = [random.randint(0, 3), random.randint(0, 3), random.randint(0, 3), random.randint(0, 3)]
-        self.result = "Not Taken"
+        self.result = ""
         self.local_history_component = LocalBranchHistory(
             self.window,
             self.x,
