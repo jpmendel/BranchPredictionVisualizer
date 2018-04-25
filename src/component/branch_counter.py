@@ -51,7 +51,7 @@ class BranchCounter(Component):
             self.y + self.height * 0.75,
             str(self.taken_not_taken))
         self.draw_text(
-            self.x - self.width * 0.25,
+            self.x - self.width * 0.25 - 15,
             self.y + self.height * 0.75,
             "Not Taken")
         self.draw_text(
