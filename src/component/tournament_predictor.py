@@ -135,6 +135,7 @@ class TournamentPredictor(Component):
         else:
             self.decrement_history(self.meta_predictor, self.get_global_branch_history())
         self.update_global_history(actual)
+        return prediction
 
     def get_branch_prediction(self, history, index):
         if history[index] > 1:

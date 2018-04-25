@@ -27,33 +27,41 @@ class BranchCounter(Component):
             self.width * 0.50, self.height * 0.50,
             fill="white", outline="black")
         self.draw_text(
+            self.x + self.width * 0.50,
+            self.y - 40,
+            "Predicted", font="TKDefaultFont 14 bold")
+        self.draw_text(
+            self.x - 60,
+            self.y + self.height * 0.50,
+            "Actual", font="TKDefaultFont 14 bold")
+        self.draw_text(
             self.x + self.width * 0.25,
-            self.y - self.height * 0.25,
-            "Taken")
+            self.y - 15,
+            "T")
         self.draw_text(
             self.x + self.width * 0.25,
             self.y + self.height * 0.25,
             str(self.taken_taken))
         self.draw_text(
             self.x + self.width * 0.75,
-            self.y - self.height * 0.25,
-            "Not Taken")
+            self.y - 15,
+            "N")
         self.draw_text(
             self.x + self.width * 0.75,
             self.y + self.height * 0.25,
             str(self.not_taken_taken))
         self.draw_text(
-            self.x - self.width * 0.25,
+            self.x - 15,
             self.y + self.height * 0.25,
-            "Taken")
+            "T")
         self.draw_text(
             self.x + self.width * 0.25,
             self.y + self.height * 0.75,
             str(self.taken_not_taken))
         self.draw_text(
-            self.x - self.width * 0.25,
+            self.x - 15,
             self.y + self.height * 0.75,
-            "Not Taken")
+            "N")
         self.draw_text(
             self.x + self.width * 0.75,
             self.y + self.height * 0.75,

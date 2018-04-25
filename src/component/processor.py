@@ -283,17 +283,33 @@ class Processor(Component):
             elif name == 'beq':
                 if self.registers[rs] == self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
-                    self.tournament_predictor.take_branch(1)
+                    prediction = self.tournament_predictor.take_branch(1)
+                    if prediction == 1:
+                        self.branch_counter.taken_taken += 1
+                    else:
+                        self.branch_counter.not_taken_taken += 1
                     return True
                 else:
-                    self.tournament_predictor.take_branch(0)
+                    prediction = self.tournament_predictor.take_branch(0)
+                    if prediction == 0:
+                        self.branch_counter.not_taken_not_taken += 1
+                    else:
+                        self.branch_counter.taken_not_taken += 1
             elif name == 'bne':
                 if self.registers[rs] != self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
-                    self.tournament_predictor.take_branch(1)
+                    prediction = self.tournament_predictor.take_branch(1)
+                    if prediction == 1:
+                        self.branch_counter.taken_taken += 1
+                    else:
+                        self.branch_counter.not_taken_taken += 1
                     return True
                 else:
-                    self.tournament_predictor.take_branch(0)
+                    prediction = self.tournament_predictor.take_branch(0)
+                    if prediction == 0:
+                        self.branch_counter.not_taken_not_taken += 1
+                    else:
+                        self.branch_counter.taken_not_taken += 1
             elif name == 'lbu':
                 self.registers[rt] = (self.memory[self.registers[rs] + sign_extended_immediate]) & 255
             elif name == 'lhu':
