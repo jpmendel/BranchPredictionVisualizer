@@ -57,6 +57,12 @@ class Processor(Component):
             self.instruction_table.x + 30, 500,
             260, 30,
             text="No Output")
+        self.actual_branch_result = OutputBox(
+            self.window,
+            430, 343,
+            200, 30,
+            text="Last actual Branch:  "
+        )
 
     def update(self):
         if self.play:
@@ -64,7 +70,6 @@ class Processor(Component):
         self.play_button.update()
         self.forward_button.update()
         self.back_button.update()
-        self.syscall_output.update()
         self.update_button_colors()
 
     def render(self):
@@ -75,6 +80,7 @@ class Processor(Component):
         self.back_button.render()
         self.tournament_predictor.render()
         self.syscall_output.render()
+        self.actual_branch_result.render()
         self.branch_counter.render()
 
     def update_button_colors(self):
@@ -284,16 +290,20 @@ class Processor(Component):
                 if self.registers[rs] == self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
                     self.tournament_predictor.take_branch(1)
+                    self.actual_branch_result.text = "Last actual Branch: T"
                     return True
                 else:
                     self.tournament_predictor.take_branch(0)
+                    self.actual_branch_result.text = "Last actual Branch: N"
             elif name == 'bne':
                 if self.registers[rs] != self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
                     self.tournament_predictor.take_branch(1)
+                    self.actual_branch_result.text = "Last actual Branch: T"
                     return True
                 else:
                     self.tournament_predictor.take_branch(0)
+                    self.actual_branch_result.text="Last actual Branch: N"
             elif name == 'lbu':
                 self.registers[rt] = (self.memory[self.registers[rs] + sign_extended_immediate]) & 255
             elif name == 'lhu':
