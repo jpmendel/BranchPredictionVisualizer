@@ -119,7 +119,15 @@ class Processor(Component):
     def next_instruction(self):
         if self.current_pc < len(self.instructions) - 1:
             # Store state
-            state_obj = ProcessorState(self.current_pc, self.registers.copy(), self.memory.copy())
+            state_obj = ProcessorState(
+                self.current_pc,
+                self.registers.copy(),
+                self.memory.copy(),
+                self.tournament_predictor.branch_history_table.copy(),
+                self.tournament_predictor.pattern_history_table.copy(),
+                self.tournament_predictor.meta_predictor.copy(),
+                self.tournament_predictor.global_branch_history.copy(),
+                self.tournament_predictor.result)
             self.push_state(state_obj)
 
             # Set next pc
@@ -140,6 +148,11 @@ class Processor(Component):
             self.current_pc = state_obj.get_pc()
             self.registers = state_obj.get_registers()
             self.memory = state_obj.get_memory()
+            self.tournament_predictor.set_branch_history_table(state_obj.get_branch_history())
+            self.tournament_predictor.set_pattern_history_table(state_obj.get_pattern_history())
+            self.tournament_predictor.set_meta_predictor(state_obj.get_meta_history())
+            self.tournament_predictor.set_global_branch_history(state_obj.get_global_branch_history())
+            self.tournament_predictor.result = state_obj.get_branch_result()
             self.instruction_table.current_pc = self.current_pc
 
             print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
@@ -289,21 +302,37 @@ class Processor(Component):
             elif name == 'beq':
                 if self.registers[rs] == self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
-                    self.tournament_predictor.take_branch(1)
+                    prediction = self.tournament_predictor.take_branch(1)
                     self.actual_branch_result.text = "Last actual Branch: T"
+                    if prediction == 1:
+                        self.branch_counter.taken_taken += 1
+                    else:
+                        self.branch_counter.not_taken_taken += 1
                     return True
                 else:
-                    self.tournament_predictor.take_branch(0)
+                    prediction = self.tournament_predictor.take_branch(0)
                     self.actual_branch_result.text = "Last actual Branch: N"
+                    if prediction == 0:
+                        self.branch_counter.not_taken_not_taken += 1
+                    else:
+                        self.branch_counter.taken_not_taken += 1
             elif name == 'bne':
                 if self.registers[rs] != self.registers[rt]:
                     self.current_pc += sign_extended_immediate + 1
-                    self.tournament_predictor.take_branch(1)
+                    prediction = self.tournament_predictor.take_branch(1)
                     self.actual_branch_result.text = "Last actual Branch: T"
+                    if prediction == 1:
+                        self.branch_counter.taken_taken += 1
+                    else:
+                        self.branch_counter.not_taken_taken += 1
                     return True
                 else:
-                    self.tournament_predictor.take_branch(0)
-                    self.actual_branch_result.text="Last actual Branch: N"
+                    prediction = self.tournament_predictor.take_branch(0)
+                    self.actual_branch_result.text = "Last actual Branch: N"
+                    if prediction == 0:
+                        self.branch_counter.not_taken_not_taken += 1
+                    else:
+                        self.branch_counter.taken_not_taken += 1
             elif name == 'lbu':
                 self.registers[rt] = (self.memory[self.registers[rs] + sign_extended_immediate]) & 255
             elif name == 'lhu':

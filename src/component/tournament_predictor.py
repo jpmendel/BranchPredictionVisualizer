@@ -135,6 +135,7 @@ class TournamentPredictor(Component):
         else:
             self.decrement_history(self.meta_predictor, self.get_global_branch_history())
         self.update_global_history(actual)
+        return prediction
 
     def get_branch_prediction(self, history, index):
         if history[index] > 1:
@@ -156,3 +157,19 @@ class TournamentPredictor(Component):
     def set_local_branch_history(self, history):
         self.local_branch_history = history
         self.local_history_component.history = history
+
+    def set_global_branch_history(self, history):
+        self.global_branch_history = history
+        self.global_history_component.history = history
+
+    def set_branch_history_table(self, history):
+        self.branch_history_table = history
+        self.bht_component.values = history
+
+    def set_pattern_history_table(self, history):
+        self.pattern_history_table = history
+        self.pht_component.values = history
+
+    def set_meta_predictor(self, history):
+        self.meta_predictor = history
+        self.meta_component.values = history
