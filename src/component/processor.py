@@ -130,7 +130,8 @@ class Processor(Component):
                 self.branch_counter.taken_taken,
                 self.branch_counter.not_taken_taken,
                 self.branch_counter.taken_not_taken,
-                self.branch_counter.not_taken_not_taken)
+                self.branch_counter.not_taken_not_taken,
+                self.actual_branch_result.text)
             self.push_state(state_obj)
 
             # Set next pc
@@ -140,10 +141,6 @@ class Processor(Component):
                 self.current_pc += 1
 
             self.instruction_table.current_pc = self.current_pc
-
-            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
-            print('\tRegisters:', self.registers)
-            print('\tMemory:', self.memory)
 
     def previous_instruction(self):
         if self.current_pc > 0:
@@ -160,11 +157,8 @@ class Processor(Component):
             self.branch_counter.not_taken_taken = state_obj.get_not_taken_taken_count()
             self.branch_counter.taken_not_taken = state_obj.get_taken_not_taken_count()
             self.branch_counter.not_taken_not_taken = state_obj.get_not_taken_not_taken_count()
+            self.actual_branch_result.text = state_obj.get_last_actual_branch()
             self.instruction_table.current_pc = self.current_pc
-
-            print('PC:', self.current_pc, '  Instruction:', self.instructions[self.current_pc])
-            print('\tRegisters:', self.registers)
-            print('\tMemory:', self.memory)
 
     def jump_to_instruction(self, target):
         self.current_pc = target
@@ -228,7 +222,6 @@ class Processor(Component):
             return instructions
 
     def process(self, instruction):
-        print('PC:', self.current_pc, '  Instruction:', instruction)
         self.tournament_predictor.set_local_branch_history((((self.current_pc + self.start_pc) * 4) >> 2) & 3)
         if instruction.is_nop():
             return
@@ -252,7 +245,6 @@ class Processor(Component):
             return True
 
         if opcode == 0x03:  # Jump and Link
-            print(instruction.get_jump_address(), self.start_pc, instruction.get_jump_address() - self.start_pc)
             self.registers['ra'] = self.current_pc + 2
             self.current_pc = instruction.get_jump_address() - self.start_pc
             return True

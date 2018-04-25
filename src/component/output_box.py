@@ -17,4 +17,3 @@ class OutputBox(Component):
         self.draw_text(
             self.x + self.width / 2, self.y + self.height / 2,
             text=self.text, fill="black", anchor="center")
-

@@ -4,7 +4,7 @@ class ProcessorState:
     def __init__(self, pc, registers, memory, branch_history, pattern_history,
                  meta_history, global_branch_history, branch_result,
                  taken_taken_count, not_taken_taken_count, taken_not_taken_count,
-                 not_taken_not_taken_count):
+                 not_taken_not_taken_count, last_actual_branch):
         self.pc = pc
         self.registers = registers
         self.memory = memory
@@ -17,6 +17,7 @@ class ProcessorState:
         self.not_taken_taken_count = not_taken_taken_count
         self.taken_not_taken_count = taken_not_taken_count
         self.not_taken_not_taken_count = not_taken_not_taken_count
+        self.last_actual_branch = last_actual_branch
 
     def __repr__(self):
         return str(self.pc)
@@ -56,3 +57,6 @@ class ProcessorState:
 
     def get_not_taken_not_taken_count(self):
         return self.not_taken_not_taken_count
+
+    def get_last_actual_branch(self):
+        return self.last_actual_branch
